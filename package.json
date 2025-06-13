@@ -3,7 +3,7 @@
     "version": "1.0.0",
     "description": "A Self Hosted GitHub Actions Worker Node that Auto Sets up in a Docker Container",
     "scripts": {
-        "build": "docker build -t mrdnalex/github-action-worker-container ./BaseContainer",
+        "build": "docker build -t ghcr.io/nano-dna-studios/gawc-base:latest ./BaseContainer",
         "run": "npm run build && docker run -it --name github-action-worker-container mrdnalex/github-action-worker-container",
         "publish": "npm run build && docker push mrdnalex/github-action-worker-container",
         "kill": "docker kill github-action-worker-container",
