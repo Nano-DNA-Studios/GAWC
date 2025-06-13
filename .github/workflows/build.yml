@@ -40,7 +40,7 @@ jobs:
     needs: build-base-gawc
     strategy:
       matrix:
-        variants: ["dotnet", "node", "python"]
+        variants: ["dotnet", "node"]
     steps:
       - name: Build Variant Container
         shell: bash
