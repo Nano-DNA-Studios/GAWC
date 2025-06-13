@@ -9,27 +9,8 @@ permissions:
   packages: read
 
 jobs:
-  setup:
-    runs-on: ["self-hosted", "run-${{github.run_id}}"]
-    steps:
-      - name: Install .NET to Device
-        uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: "8.x.x"
-
-      - name: Clone and Checkout the Repo
-        uses: actions/checkout@v4
-        with:
-          submodules: recursive
-          token: ${{ secrets.GITHUB_TOKEN }}
-          clean: true
-
-      - name: Run .NET Restore to reload NuGet Packages
-        run: dotnet restore 
-
   build-base-gawc:
     runs-on: ["self-hosted", "run-${{github.run_id}}"]
-    needs: setup
     steps:
       - name: Build Base Container
         shell: bash
