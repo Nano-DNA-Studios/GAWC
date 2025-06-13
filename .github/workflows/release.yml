@@ -1,0 +1,76 @@
+name: Release
+
+on:
+  release:
+    types: [published]  
+  
+permissions:
+  contents: write
+  packages: write
+
+jobs:
+  version:
+    runs-on: ["self-hosted", "run-${{github.run_id}}"]
+    outputs:
+      version: ${{ steps.get-tag-version.outputs.version }}
+    steps:
+      - name: Get Tag Version
+        id: get-tag-version
+        shell: bash
+        run: |
+          tagName="${{ github.event.release.tag_name }}"
+          version="${tagName#v}"  # Removes the 'v' prefix if it exists
+          echo "Extracted version $version from tag"
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+
+  build-base-gawc:
+    runs-on: ["self-hosted", "run-${{github.run_id}}"]
+    needs: version
+    steps:
+      - name: Build Base Container
+        shell: bash
+        run: docker build -t ghcr.io/nano-dna-studios/gawc-base:${{ needs.version.outputs.version }} ./BaseContainer
+
+  upload-base-gawc:
+    runs-on: ["self-hosted", "run-${{github.run_id}}"]
+    needs: [version, build-base-gawc]
+    steps:
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and Push Base Container
+        shell: bash
+        run: docker push ghcr.io/nano-dna-studios/gawc-base:${{ needs.version.outputs.version }}
+
+  build-variant-gawcs:
+    runs-on: ["self-hosted", "run-${{github.run_id}}"]
+    needs: [version, build-base-gawc]
+    strategy:
+      matrix:
+        variants: ["dotnet", "node"]
+    steps:
+      - name: Build Variant Container
+        shell: bash
+        run: docker build -t ghcr.io/nano-dna-studios/gawc-${{ matrix.variants }}:${{ needs.version.outputs.version }} ./Variants/${{ matrix.variants }}
+
+  upload-variant-gawcs:
+    runs-on: ["self-hosted", "run-${{github.run_id}}"]
+    needs: [version, build-variant-gawcs]
+    strategy:
+      matrix:
+        variants: ["dotnet", "node"]
+    steps:
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and Push Variant Container
+        shell: bash
+        run: docker push ghcr.io/nano-dna-studios/gawc-${{ matrix.variants }}:${{ needs.version.outputs.version }}

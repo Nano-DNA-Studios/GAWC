@@ -25,4 +25,4 @@ jobs:
     steps:
       - name: Build Variant Container
         shell: bash
-        run: docker build -t ghcr.io/nano-dna-studios/gawc-${{ matrix.variants }} ./Variants/${{ matrix.variants }}
+        run: docker build -t ghcr.io/nano-dna-studios/gawc-${{ matrix.variants }}:latest ./Variants/${{ matrix.variants }}
