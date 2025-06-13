@@ -66,7 +66,5 @@ COPY . .
 # Change the to the GitWorker User
 USER GitWorker
 
-
-
 # Run the Worker
 CMD ["/bin/sh", "-c", "./config.sh --url $REPO --token $TOKEN --name $RUNNERNAME --runnergroup $RUNNERGROUP --labels $RUNNERLABELS --work $RUNNERWORKDIR --unattended && ./run.sh"]
