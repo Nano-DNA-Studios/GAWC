@@ -9,8 +9,15 @@ permissions:
   packages: write
 
 jobs:
+  setup:
+    runs-on: ["self-hosted", "run-${{github.run_id}}"]
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
   version:
     runs-on: ["self-hosted", "run-${{github.run_id}}"]
+    needs: setup
     outputs:
       version: ${{ steps.get-tag-version.outputs.version }}
     steps:
