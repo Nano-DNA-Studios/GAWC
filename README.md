@@ -107,7 +107,6 @@ The Root Work Directory the GAWC uses, All Workflows that run using the GAWC wil
 Default Value is the same as where the Executable is held : WorkDir
 
 # GAWC Variants
----
 There are a few GAWC Variants currently hosted by the Repository
 
 ## Base Containers
