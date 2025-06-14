@@ -51,7 +51,7 @@ GAWC Docker Image to use for the Runner, this is the last Value in the Command, 
 
 GAWC-Name must be all **Lower-Case** with no spaces
 
-GAWC-Name can be set to ``gawc-base`` if you want a basic fresh image, if you want a Specific Language or Framework, consult with the list below [[#GAWC Variants]]
+GAWC-Name can be set to ``gawc-base`` if you want a basic fresh image, if you want a Specific Language or Framework, consult with the list below (#GAWC Variants)
 
 Version of the Image can be set to ``:latest`` if you want the latest version
 
@@ -104,16 +104,20 @@ There are a few GAWC Variants currently hosted by the Repository
 ## Base Containers
 The following base containers have basic packages installed and basic setup related to their Base OS Images, these are typically meant to be used to create more complex GAWC's at a later stage
 
-GAWC-Base : A Base GAWC Image, has basic Linux Packages installed and the latest version of GitHub Actions Worker for Linux.
+### GAWC-Base
+A Base GAWC Image, has basic Linux Packages installed and the latest version of GitHub Actions Worker for Linux.
 
 ## Variants
 The following containers all inherit from GAWC-Base, they each have installations and configurations for Languages or Frameworks. These are used for Automayted Builds for Projects using those Languages or Frameworks
 
-GAWC-Dotnet : Has the latest version of Dotnet installed, used for C# or DotNet (.NET) Related Projects
+### GAWC-Dotnet
+Has the latest version of Dotnet installed, used for C# or DotNet (.NET) Related Projects
 
-GAWC-Node : Has the latest version of Node JS Installed, used for Node JS and Web Development Projects
+### GAWC-Node
+Has the latest version of Node JS Installed, used for Node JS and Web Development Projects
 
-GAWC-Python : Has the latest version of Python3 Installed, used for Python Related Projects
+### GAWC-Python
+Has the latest version of Python3 Installed, used for Python Related Projects
 
 ## Support
 ----
