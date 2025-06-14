@@ -23,6 +23,20 @@ jobs:
         shell: bash
         run: docker build -t ghcr.io/nano-dna-studios/gawc-base:latest ./BaseContainer
 
+  find-variants:
+    runs-on: ["self-hosted", "run-${{github.run_id}}"]
+    needs: build-base-gawc
+    outputs:
+      variants: ${{ steps.set-variants.outputs.variants }}
+    steps:
+      - name: Set Variants
+        id: set-variants
+        shell: bash
+        run: |
+          variants=$(ls ./Variants)
+          echo "Found variants: $variants"
+          echo "variants=$variants" >> "$GITHUB_OUTPUT"
+
   build-variant-gawcs:
     runs-on: ["self-hosted", "run-${{github.run_id}}"]
     needs: build-base-gawc
