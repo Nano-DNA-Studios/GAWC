@@ -65,7 +65,7 @@ Link to the Repository the GAWC will be registered to
 ---
 The GitHub Action Worker Token that GitHub Will give you when you want to create a new Worker.
 
-New Tokens can be Dynamically requested through the GitHub API by using the following HTTP Request
+New Tokens can be Dynamically requested through the GitHub API by using the following HTTP Request. Must add Username/UserAgent and GitHub Personal Access Token (PAT) to the Web Request for Authorization purposes.
 
 ```
 https://api.github.com/repos/{ownerName}/{repositoryName}/actions/runners/registration-token
