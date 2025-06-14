@@ -33,9 +33,15 @@ jobs:
         id: set-variants
         shell: bash
         run: |
-          variants=$(ls ./Variants)
-          echo "Found variants: $variants"
-          echo "variants=$variants" >> "$GITHUB_OUTPUT"
+          variants=()
+          for folder in ./Variants/*; do
+            if [ -d "$folder" ]; then
+              variant=$(basename "$folder")
+              variants+=("\"$variant\"")
+            fi
+          done
+
+          echo "Found variants: ${variants[*]}"
 
   build-variant-gawcs:
     runs-on: ["self-hosted", "run-${{github.run_id}}"]
