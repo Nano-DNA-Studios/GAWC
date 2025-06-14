@@ -1,0 +1,67 @@
+name: Build
+
+on:
+  workflow_dispatch:
+  pull_request:
+  
+permissions:
+  contents: read 
+  packages: read
+
+jobs:
+  setup:
+    runs-on: ["self-hosted", "run-${{github.run_id}}"]
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+  build-base-gawc:
+    runs-on: ["self-hosted", "run-${{github.run_id}}"]
+    needs: setup
+    steps:
+      - name: Build Base Container
+        shell: bash
+        run: docker build -t ghcr.io/nano-dna-studios/gawc-base:latest ./BaseContainer
+
+  find-variants:
+    runs-on: ["self-hosted", "run-${{github.run_id}}"]
+    needs: build-base-gawc
+    outputs:
+      variants: ${{ steps.set-variants.outputs.variants }}
+    steps:
+      - name: Set Variants
+        id: set-variants
+        shell: bash
+        run: |
+          variants=()
+          # Loop over all Directories in ./Variants (/*/ = Folders only, /* = All Files and Folders)
+          for folder in ./Variants/*/; do
+            # Check if it is a Directory (-d)
+            if [ -d "$folder" ]; then 
+              # Extract the folder name as the variant
+              variant=$(basename "$folder")
+              variants+=("\"$variant\"")
+            fi
+          done
+
+          if [ ${#variants[@]} -eq 0 ]; then
+            echo "No variants found in ./Variants directory."
+            exit 1
+          else
+            echo "Found variants: ${variants[*]}"
+
+            # JSON Array the Variants
+            json="[$(IFS=,; echo "${variants[*]}")]"
+            echo "variants=$json" >> "$GITHUB_OUTPUT"
+          fi
+
+  build-variant-gawcs:
+    runs-on: ["self-hosted", "run-${{github.run_id}}"]
+    needs: find-variants
+    strategy:
+      matrix:
+        variants: ${{ fromJson(needs.find-variants.outputs.variants) }}
+    steps:
+      - name: Build Variant Container
+        shell: bash
+        run: docker build -t ghcr.io/nano-dna-studios/gawc-${{ matrix.variants }}:latest ./Variants/${{ matrix.variants }}

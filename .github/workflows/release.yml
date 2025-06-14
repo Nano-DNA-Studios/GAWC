@@ -1,0 +1,115 @@
+name: Release
+
+on:
+  release:
+    types: [published]  
+  
+permissions:
+  contents: write
+  packages: write
+
+jobs:
+  setup:
+    runs-on: ["self-hosted", "run-${{github.run_id}}"]
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+  version:
+    runs-on: ["self-hosted", "run-${{github.run_id}}"]
+    needs: setup
+    outputs:
+      version: ${{ steps.get-tag-version.outputs.version }}
+    steps:
+      - name: Get Tag Version
+        id: get-tag-version
+        shell: bash
+        run: |
+          tagName="${{ github.event.release.tag_name }}"
+          version="${tagName#v}"  # Removes the 'v' prefix if it exists
+          echo "Extracted version $version from tag"
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+
+  build-base-gawc:
+    runs-on: ["self-hosted", "run-${{github.run_id}}"]
+    needs: version
+    steps:
+      - name: Build Base Container
+        shell: bash
+        run: docker build -t ghcr.io/nano-dna-studios/gawc-base:${{ needs.version.outputs.version }} ./BaseContainer
+
+  upload-base-gawc:
+    runs-on: ["self-hosted", "run-${{github.run_id}}"]
+    needs: [version, build-base-gawc]
+    steps:
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and Push Base Container
+        shell: bash
+        run: docker push ghcr.io/nano-dna-studios/gawc-base:${{ needs.version.outputs.version }}
+
+  find-variants:
+    runs-on: ["self-hosted", "run-${{github.run_id}}"]
+    needs: build-base-gawc
+    outputs:
+      variants: ${{ steps.set-variants.outputs.variants }}
+    steps:
+      - name: Set Variants
+        id: set-variants
+        shell: bash
+        run: |
+          variants=()
+          # Loop over all Directories in ./Variants (/*/ = Folders only, /* = All Files and Folders)
+          for folder in ./Variants/*/; do
+            # Check if it is a Directory (-d)
+            if [ -d "$folder" ]; then 
+              # Extract the folder name as the variant
+              variant=$(basename "$folder")
+              variants+=("\"$variant\"")
+            fi
+          done
+
+          if [ ${#variants[@]} -eq 0 ]; then
+            echo "No variants found in ./Variants directory."
+            exit 1
+          else
+            echo "Found variants: ${variants[*]}"
+
+            # JSON Array the Variants
+            json="[$(IFS=,; echo "${variants[*]}")]"
+            echo "variants=$json" >> "$GITHUB_OUTPUT"
+          fi
+
+  build-variant-gawcs:
+    runs-on: ["self-hosted", "run-${{github.run_id}}"]
+    needs: [version, find-variants]
+    strategy:
+      matrix:
+        variants: ${{ fromJson(needs.find-variants.outputs.variants) }}
+    steps:
+      - name: Build Variant Container
+        shell: bash
+        run: docker build -t ghcr.io/nano-dna-studios/gawc-${{ matrix.variants }}:${{ needs.version.outputs.version }} ./Variants/${{ matrix.variants }}
+
+  upload-variant-gawcs:
+    runs-on: ["self-hosted", "run-${{github.run_id}}"]
+    needs: [version, build-variant-gawcs]
+    strategy:
+      matrix:
+        variants: ["dotnet", "node"]
+    steps:
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and Push Variant Container
+        shell: bash
+        run: docker push ghcr.io/nano-dna-studios/gawc-${{ matrix.variants }}:${{ needs.version.outputs.version }}
