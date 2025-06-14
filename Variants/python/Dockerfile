@@ -2,7 +2,7 @@
 FROM ghcr.io/nano-dna-studios/gawc-base:latest
 
 # Define Python Version
-ENV PYTHON_VERSION=3.12.6
+ENV PYTHON_VERSION=3.11
 
 # Switch to root
 USER root
