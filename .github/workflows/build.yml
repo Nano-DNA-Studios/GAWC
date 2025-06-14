@@ -57,7 +57,7 @@ jobs:
 
   build-variant-gawcs:
     runs-on: ["self-hosted", "run-${{github.run_id}}"]
-    needs: [find-variants, build-base-gawc]
+    needs: find-variants
     strategy:
       matrix:
         variants: ${{ fromJson(needs.find-variants.outputs.variants) }}
