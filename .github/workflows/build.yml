@@ -34,21 +34,33 @@ jobs:
         shell: bash
         run: |
           variants=()
-          for folder in ./Variants/*; do
-            if [ -d "$folder" ]; then
+          # Loop over all Directories in ./Variants (/*/ = Folders only, /* = All Files and Folders)
+          for folder in ./Variants/*/; do
+            # Check if it is a Directory (-d)
+            if [ -d "$folder" ]; then 
+              # Extract the folder name as the variant
               variant=$(basename "$folder")
               variants+=("\"$variant\"")
             fi
           done
 
-          echo "Found variants: ${variants[*]}"
+          if [ ${#variants[@]} -eq 0 ]; then
+            echo "No variants found in ./Variants directory."
+            exit 1
+          else
+            echo "Found variants: ${variants[*]}"
+
+            # JSON Array the Variants
+            json="[$(IFS=,; echo "${variants[*]}")]"
+            echo "variants=$json" >> "$GITHUB_OUTPUT"
+          fi
 
   build-variant-gawcs:
     runs-on: ["self-hosted", "run-${{github.run_id}}"]
-    needs: build-base-gawc
+    needs: [find-variants, build-base-gawc]
     strategy:
       matrix:
-        variants: ["dotnet", "node"]
+        variants: ${{ fromJson(needs.find-variants.outputs.variants) }}
     steps:
       - name: Build Variant Container
         shell: bash
