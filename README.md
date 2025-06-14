@@ -44,9 +44,11 @@ docker run --name gawc-runner -e REPO=https://github.com/Nano-DNA-Studios/GAWC -
 ## Variables
 
 ### Name
+---
 Name of the Docker Container, Must be unique, used to identify the Docker Container on the local device using ``docker ps``
 
 ### Docker Image
+---
 GAWC Docker Image to use for the Runner, this is the last Value in the Command, replace the Name and Version according to your needs.
 
 GAWC-Name must be all **Lower-Case** with no spaces
@@ -56,9 +58,11 @@ GAWC-Name can be set to ``gawc-base`` if you want a basic fresh image, if you wa
 Version of the Image can be set to ``:latest`` if you want the latest version
 
 ### REPO
+---
 Link to the Repository the GAWC will be registered to
 
 ### TOKEN
+---
 The GitHub Action Worker Token that GitHub Will give you when you want to create a new Worker.
 
 New Tokens can be Dynamically requested through the GitHub API by using the following HTTP Request
@@ -68,12 +72,15 @@ https://api.github.com/repos/{ownerName}/{repositoryName}/actions/runners/regist
 ```
 
 ### RUNNERGROUP
+---
 Name of the Runner Group the GAWC will belong to. Method of Organizing many GitHub Action Workers into closely related Clusters for large automation Tasks. Typically can be left empty
 
 ### RUNNERNAME
+---
 Unique Display Name of the GAWC. Visible on GitHub Website when looking at Registered Runners. Used to Identify and Differentiate GAWC's
 
 ### RUNNERLABELS
+---
 List of Unique Labels to Categorize GitHub Action Worker. 
 
 These Labels can be used in Workflows to Filter and Specifiy a Specific GAWC to Run a Workflow. 
@@ -94,31 +101,36 @@ jobs:
 Default labels are : self-hosted, {operating-system} (Linux), {computer-architecture} (X64)
 
 ### RUNNERWORKDIR
+---
 The Root Work Directory the GAWC uses, All Workflows that run using the GAWC will Clone their Repositories to this Directory
 
 Default Value is the same as where the Executable is held : WorkDir
 
 # GAWC Variants
+---
 There are a few GAWC Variants currently hosted by the Repository
 
 ## Base Containers
 The following base containers have basic packages installed and basic setup related to their Base OS Images, these are typically meant to be used to create more complex GAWC's at a later stage
 
 ### GAWC-Base
+---
 A Base GAWC Image, has basic Linux Packages installed and the latest version of GitHub Actions Worker for Linux.
 
 ## Variants
 The following containers all inherit from GAWC-Base, they each have installations and configurations for Languages or Frameworks. These are used for Automayted Builds for Projects using those Languages or Frameworks
 
 ### GAWC-Dotnet
+---
 Has the latest version of Dotnet installed, used for C# or DotNet (.NET) Related Projects
 
 ### GAWC-Node
+---
 Has the latest version of Node JS Installed, used for Node JS and Web Development Projects
 
 ### GAWC-Python
+---
 Has the latest version of Python3 Installed, used for Python Related Projects
 
-## Support
-----
+# Support
 For Additional Support, Contact MrDNAlex through the email : ``Mr.DNAlex.2003@gmail.com``.
