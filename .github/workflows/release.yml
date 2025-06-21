@@ -98,10 +98,10 @@ jobs:
 
   upload-variant-gawcs:
     runs-on: ["self-hosted", "run-${{github.run_id}}"]
-    needs: [version, build-variant-gawcs]
+    needs: [version, build-variant-gawcs, find-variants]
     strategy:
       matrix:
-        variants: ["dotnet", "node"]
+        variants: ${{ fromJson(needs.find-variants.outputs.variants) }}
     steps:
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v3

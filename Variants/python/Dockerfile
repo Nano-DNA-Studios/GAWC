@@ -10,7 +10,6 @@ USER root
 # Set the Working Directory
 WORKDIR /home/GitWorker
 
-
 # Install Python according to the version defined
 RUN apt-get update && \
     apt-get install -y software-properties-common && \
