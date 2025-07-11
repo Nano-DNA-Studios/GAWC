@@ -2,7 +2,7 @@
 FROM ghcr.io/nano-dna-studios/gawc-base:latest
 
 # Define the Dotnet Version
-ENV DOTNET_VERSION=8.0.411
+ENV DOTNET_VERSION=8.0.412
 
 # Switch to root
 USER root
