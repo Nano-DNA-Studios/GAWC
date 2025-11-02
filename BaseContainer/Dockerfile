@@ -1,5 +1,5 @@
 # Use Ubuntu 20.04 Image
-FROM ubuntu:20.04
+FROM ubuntu:24.04
 
 # Define GitHub Action Worker Version
 ENV WORKERVERSION="2.329.0"
