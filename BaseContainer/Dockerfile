@@ -1,8 +1,8 @@
 # Use Ubuntu 20.04 Image
-FROM ubuntu:20.04
+FROM ubuntu:24.04
 
 # Define GitHub Action Worker Version
-ENV WORKERVERSION="2.326.0"
+ENV WORKERVERSION="2.329.0"
 ENV DEBIAN_FRONTEND=noninteractive
 
 # Install dependencies and Auto Configure Timezone
