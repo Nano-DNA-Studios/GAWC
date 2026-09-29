@@ -2,7 +2,7 @@
 FROM ubuntu:24.04
 
 # Define GitHub Action Worker Version
-ENV WORKERVERSION="2.332.0"
+ENV WORKERVERSION="2.337.0"
 ENV DEBIAN_FRONTEND=noninteractive
 
 # Install dependencies and Auto Configure Timezone

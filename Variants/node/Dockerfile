@@ -7,7 +7,7 @@ USER root
 # Install Node.js 20 and latest npm
 RUN apt-get update && \
     apt-get install -y curl gnupg ca-certificates && \
-    curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && \
+    curl -fsSL https://deb.nodesource.com/setup_22.x | bash - && \
     apt-get install -y nodejs && \
     npm install -g npm@latest && \
     ln -sf $(which node) /usr/local/bin/node && \
